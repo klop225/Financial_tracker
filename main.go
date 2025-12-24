@@ -23,8 +23,6 @@ func main() {
 				continue
 			}
 			command.Add(money)
-		case "take":
-			fmt.Print("сколько вы хотите вывести? ")
 		}
 	}
 }
