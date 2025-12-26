@@ -1,7 +1,7 @@
 package command
 
-import "fmt"
+import "Financial_tracker/storage"
 
 func Add(money float64) {
-	fmt.Println(money)
+	storage.WriteBalance(money)
 }
