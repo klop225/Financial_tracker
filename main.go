@@ -24,6 +24,14 @@ func main() {
 				continue
 			}
 			command.Add(money)
+		case "take":
+			fmt.Print("сколько хотите снять? ")
+			fmt.Scan(&money)
+			if money <= 0 {
+				fmt.Println("ошибка при снятие")
+				continue
+			}
+			command.Take(money)
 		case "balance":
 			data, _ := os.ReadFile("balance")
 			fmt.Printf("ваш баланс %s", string(data))
