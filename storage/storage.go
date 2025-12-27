@@ -6,11 +6,18 @@ import (
 	"strconv"
 )
 
-func ReadBalance(money float64) {
+func ReadBalance(money float64, b bool) {
 	data, _ := os.ReadFile("balance")
 	balance, _ := strconv.ParseFloat(string(data), 64)
 
-	WriteBalance(balance + money)
+	if b {
+		WriteBalance(balance + money)
+		return
+	} else if money < balance {
+		WriteBalance(balance - money)
+		return
+	}
+	fmt.Println("столько на баласне нету")
 }
 
 func WriteBalance(balance float64) {
