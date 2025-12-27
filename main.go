@@ -3,6 +3,7 @@ package main
 import (
 	"Financial_tracker/command"
 	"fmt"
+	"os"
 )
 
 func main() {
@@ -23,6 +24,9 @@ func main() {
 				continue
 			}
 			command.Add(money)
+		case "balance":
+			data, _ := os.ReadFile("balance")
+			fmt.Printf("ваш баланс %s", string(data))
 		}
 	}
 }
