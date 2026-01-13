@@ -35,6 +35,9 @@ func main() {
 		case "balance":
 			data, _ := os.ReadFile("balance")
 			fmt.Printf("ваш баланс %s", string(data))
+		case "history":
+			data, _ := os.ReadFile("history")
+			fmt.Print(string(data))
 		}
 	}
 }
