@@ -3,7 +3,6 @@ package main
 import (
 	"Financial_tracker/command"
 	"fmt"
-	"os"
 )
 
 func main() {
@@ -23,7 +22,11 @@ func main() {
 				fmt.Println("ошибка при пополнение")
 				continue
 			}
-			command.Add(money)
+			if err := command.Add(money); err != nil {
+				fmt.Printf("Ошибка: %v\n", err)
+			} else {
+				fmt.Printf("Средства успешно добавлены\n")
+			}
 		case "take":
 			fmt.Print("сколько хотите снять? ")
 			fmt.Scan(&money)
@@ -31,13 +34,25 @@ func main() {
 				fmt.Println("ошибка при снятие")
 				continue
 			}
-			command.Take(money)
+			if err := command.Take(money); err != nil {
+				fmt.Printf("Ошибка: %v\n", err)
+			} else {
+				fmt.Printf("Средства успешно сняты\n")
+			}
 		case "balance":
-			data, _ := os.ReadFile("balance")
-			fmt.Printf("ваш баланс %s", string(data))
+			balance, err := command.GetBalance()
+			if err != nil {
+				fmt.Printf("Ошибка: %v\n", err)
+			} else {
+				fmt.Printf("ваш баланс %.2f\n", balance)
+			}
 		case "history":
-			data, _ := os.ReadFile("history")
-			fmt.Print(string(data))
+			history, err := command.GetHistory()
+			if err != nil {
+				fmt.Printf("Ошибка: %v\n", err)
+			} else {
+				fmt.Print(history)
+			}
 		}
 	}
 }
