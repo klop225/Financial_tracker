@@ -83,7 +83,7 @@ func Withdraw(money float64) error {
 	}
 
 	newAmount := bal.Amount - money
-	if err := Withdraw(newAmount); err != nil {
+	if err := WriteBalance(newAmount); err != nil {
 		return err
 	}
 	return writeHistory("Снял", money, newAmount)
