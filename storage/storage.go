@@ -61,6 +61,10 @@ func writeHistory(operation string, money, balance float64) error {
 	return nil
 }
 func Deposit(money float64) error {
+	if money <= 0 {
+		return fmt.Errorf("некорректная сумма пополнения: %.2f, сумма должна быть больше нуля", money)
+	}
+
 	bal, err := ReadBalance()
 	if err != nil {
 		return err
