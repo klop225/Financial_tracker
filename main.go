@@ -18,10 +18,6 @@ func main() {
 		case "add":
 			fmt.Print("какая сумма пополнения ")
 			fmt.Scan(&money)
-			if money <= 0 {
-				fmt.Println("ошибка при пополнение")
-				continue
-			}
 			if err := command.Add(money); err != nil {
 				fmt.Printf("Ошибка: %v\n", err)
 			} else {
