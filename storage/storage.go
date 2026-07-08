@@ -77,6 +77,10 @@ func Deposit(money float64) error {
 }
 
 func Withdraw(money float64) error {
+	if money <= 0 {
+		return fmt.Errorf("некорректная сумма снятия: %.2f, сумма должна быть больше нуля", money)
+	}
+
 	bal, err := ReadBalance()
 	if err != nil {
 		return err

@@ -94,3 +94,21 @@ func TestDepositNegative(t *testing.T) {
 		t.Error("Ожидалась ошибка при отрицательной сумме")
 	}
 }
+
+func TestWithdrawNegative(t *testing.T) {
+
+	defer func() {
+		os.Remove(balanceFile)
+		os.Remove(historyFile)
+	}()
+
+	err := Deposit(100)
+	if err != nil {
+		fmt.Errorf("Не удалось пополнить баланс: %v", err)
+	}
+
+	err = Withdraw(-50)
+	if err == nil {
+		t.Error("Ожидалась ошибка при отрицательной сумме")
+	}
+}
