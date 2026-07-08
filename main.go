@@ -26,10 +26,6 @@ func main() {
 		case "take":
 			fmt.Print("сколько хотите снять? ")
 			fmt.Scan(&money)
-			if money <= 0 {
-				fmt.Println("ошибка при снятие")
-				continue
-			}
 			if err := command.Take(money); err != nil {
 				fmt.Printf("Ошибка: %v\n", err)
 			} else {
