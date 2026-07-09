@@ -112,3 +112,33 @@ func TestWithdrawNegative(t *testing.T) {
 		t.Error("Ожидалась ошибка при отрицательной сумме")
 	}
 }
+
+func TestGetHistory(t *testing.T) {
+
+	defer func() {
+		os.Remove(balanceFile)
+		os.Remove(historyFile)
+	}()
+
+	history, err := GetHistory()
+	if err != nil {
+		t.Errorf("GetHistory вернул ошибку: %v", err)
+	}
+
+	if history != "история пуста\n" {
+		t.Errorf("Ожидалась пустая история, получено: %s", history)
+	}
+
+	err = Deposit(30)
+	if err != nil {
+		fmt.Errorf("Не удалось пополнить баланс: %v", err)
+	}
+
+	err = Withdraw(20)
+	if err != nil {
+		fmt.Errorf("Withdraw вернул ошибку: %v", err)
+	}
+	if len(history) == 0 {
+		t.Error("История не должна быть пустой")
+	}
+}
