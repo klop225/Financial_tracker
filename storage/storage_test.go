@@ -137,7 +137,13 @@ func TestGetHistory(t *testing.T) {
 	if err != nil {
 		t.Errorf("Withdraw вернул ошибку: %v", err)
 	}
-	if len(history) == 0 {
+
+	h, err := GetHistory()
+	if err != nil {
+		t.Errorf("GetHistory вернул ошибку: %v", err)
+	}
+
+	if len(h) == 0 {
 		t.Error("История не должна быть пустой")
 	}
 }
