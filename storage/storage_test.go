@@ -6,15 +6,15 @@ import (
 )
 
 const (
-	balanceFIle = "balance.json"
-	historyFIle = "history"
+	balanceFileTest = "balance.json"
+	historyFileTest = "history"
 )
 
 func TestDeposit(t *testing.T) {
 
 	defer func() {
-		os.Remove(balanceFIle)
-		os.Remove(historyFIle)
+		os.Remove(balanceFileTest)
+		os.Remove(historyFileTest)
 	}()
 
 	err := Deposit(100.50)
@@ -35,8 +35,8 @@ func TestDeposit(t *testing.T) {
 func TestWithdraw(t *testing.T) {
 
 	defer func() {
-		os.Remove(balanceFile)
-		os.Remove(historyFile)
+		os.Remove(balanceFileTest)
+		os.Remove(historyFileTest)
 	}()
 
 	err := Deposit(200)
@@ -61,8 +61,8 @@ func TestWithdraw(t *testing.T) {
 func TestWithdrawInsufficientFunds(t *testing.T) {
 
 	defer func() {
-		os.Remove(balanceFile)
-		os.Remove(historyFile)
+		os.Remove(balanceFileTest)
+		os.Remove(historyFileTest)
 	}()
 
 	err := Deposit(100)
@@ -84,8 +84,8 @@ func TestWithdrawInsufficientFunds(t *testing.T) {
 func TestDepositNegative(t *testing.T) {
 
 	defer func() {
-		os.Remove(balanceFile)
-		os.Remove(historyFile)
+		os.Remove(balanceFileTest)
+		os.Remove(historyFileTest)
 	}()
 
 	err := Deposit(-50)
@@ -97,8 +97,8 @@ func TestDepositNegative(t *testing.T) {
 func TestWithdrawNegative(t *testing.T) {
 
 	defer func() {
-		os.Remove(balanceFile)
-		os.Remove(historyFile)
+		os.Remove(balanceFileTest)
+		os.Remove(historyFileTest)
 	}()
 
 	err := Deposit(100)
@@ -115,8 +115,8 @@ func TestWithdrawNegative(t *testing.T) {
 func TestGetHistory(t *testing.T) {
 
 	defer func() {
-		os.Remove(balanceFile)
-		os.Remove(historyFile)
+		os.Remove(balanceFileTest)
+		os.Remove(historyFileTest)
 	}()
 
 	history, err := GetHistory()
