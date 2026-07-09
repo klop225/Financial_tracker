@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"fmt"
 	"os"
 	"testing"
 )
@@ -42,20 +41,20 @@ func TestWithdraw(t *testing.T) {
 
 	err := Deposit(200)
 	if err != nil {
-		fmt.Errorf("Не удалось пополнить баланс: %v", err)
+		t.Errorf("Не удалось пополнить баланс: %v", err)
 	}
 
 	err = Withdraw(50)
 	if err != nil {
-		fmt.Errorf("Withdraw вернул ошибку: %v", err)
+		t.Errorf("Withdraw вернул ошибку: %v", err)
 	}
 
 	bal, err := ReadBalance()
 	if err != nil {
-		fmt.Errorf("Не удалось прочитать баланс: %v", err)
+		t.Errorf("Не удалось прочитать баланс: %v", err)
 	}
 	if bal.Amount != 150 {
-		fmt.Errorf("Ожидался баланс 150.00, получено %.2f", bal.Amount)
+		t.Errorf("Ожидался баланс 150.00, получено %.2f", bal.Amount)
 	}
 }
 
@@ -68,7 +67,7 @@ func TestWithdrawInsufficientFunds(t *testing.T) {
 
 	err := Deposit(100)
 	if err != nil {
-		fmt.Errorf("Не удалось пополнить баланс: %v", err)
+		t.Errorf("Не удалось пополнить баланс: %v", err)
 	}
 
 	err = Withdraw(200)
@@ -104,7 +103,7 @@ func TestWithdrawNegative(t *testing.T) {
 
 	err := Deposit(100)
 	if err != nil {
-		fmt.Errorf("Не удалось пополнить баланс: %v", err)
+		t.Errorf("Не удалось пополнить баланс: %v", err)
 	}
 
 	err = Withdraw(-50)
@@ -131,12 +130,12 @@ func TestGetHistory(t *testing.T) {
 
 	err = Deposit(30)
 	if err != nil {
-		fmt.Errorf("Не удалось пополнить баланс: %v", err)
+		t.Errorf("Не удалось пополнить баланс: %v", err)
 	}
 
 	err = Withdraw(20)
 	if err != nil {
-		fmt.Errorf("Withdraw вернул ошибку: %v", err)
+		t.Errorf("Withdraw вернул ошибку: %v", err)
 	}
 	if len(history) == 0 {
 		t.Error("История не должна быть пустой")
