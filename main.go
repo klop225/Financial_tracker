@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	store := storage.NewFile("balance.json", "history")
+	store := storage.NewFile("balance.json", "history.json")
 
 	cmdHandler := command.NewCommandHadler(store)
 
