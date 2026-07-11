@@ -7,17 +7,23 @@ import (
 	"time"
 )
 
-var (
-	balanceFile = "balance.json"
-	historyFile = "history"
-)
-
+type File struct {
+	balanceFile string
+	historyFile string
+}
 type Balance struct {
 	Amount float64 `json:"amount"`
 }
 
-func ReadBalance() (Balance, error) {
-	data, err := os.ReadFile(balanceFile)
+func NewFile(balFile, HistFile string) *File {
+	return &File{
+		balanceFile: balFile,
+		historyFile: HistFile,
+	}
+}
+
+func (f *File) ReadBalance() (Balance, error) {
+	data, err := os.ReadFile(f.balanceFile)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return Balance{Amount: 0}, nil
@@ -33,21 +39,21 @@ func ReadBalance() (Balance, error) {
 	return bal, nil
 }
 
-func WriteBalance(balance float64) error {
+func (f *File) WriteBalance(balance float64) error {
 	bal := Balance{Amount: balance}
 	data, err := json.Marshal(bal)
 	if err != nil {
 		return fmt.Errorf("не удалось сформировать json: %w", err)
 	}
 
-	if err := os.WriteFile(balanceFile, data, 0644); err != nil {
+	if err := os.WriteFile(f.balanceFile, data, 0644); err != nil {
 		return fmt.Errorf("не удалось записать баланс: %w", err)
 	}
 	return nil
 }
 
-func writeHistory(operation string, money, balance float64) error {
-	file, err := os.OpenFile(historyFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+func (f *File) writeHistory(operation string, money, balance float64) error {
+	file, err := os.OpenFile(f.historyFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return fmt.Errorf("не удалось открыть историю: %w", err)
 	}
@@ -60,28 +66,29 @@ func writeHistory(operation string, money, balance float64) error {
 	}
 	return nil
 }
-func Deposit(money float64) error {
+
+func (f *File) Deposit(money float64) error {
 	if money <= 0 {
 		return fmt.Errorf("некорректная сумма пополнения: %.2f, сумма должна быть больше нуля", money)
 	}
 
-	bal, err := ReadBalance()
+	bal, err := f.ReadBalance()
 	if err != nil {
 		return err
 	}
 	newAmount := bal.Amount + money
-	if err := WriteBalance(newAmount); err != nil {
+	if err := f.WriteBalance(newAmount); err != nil {
 		return err
 	}
-	return writeHistory("Пополнил", money, newAmount)
+	return f.writeHistory("Пополнил", money, newAmount)
 }
 
-func Withdraw(money float64) error {
+func (f *File) Withdraw(money float64) error {
 	if money <= 0 {
 		return fmt.Errorf("некорректная сумма снятия: %.2f, сумма должна быть больше нуля", money)
 	}
 
-	bal, err := ReadBalance()
+	bal, err := f.ReadBalance()
 	if err != nil {
 		return err
 	}
@@ -91,22 +98,22 @@ func Withdraw(money float64) error {
 	}
 
 	newAmount := bal.Amount - money
-	if err := WriteBalance(newAmount); err != nil {
+	if err := f.WriteBalance(newAmount); err != nil {
 		return err
 	}
-	return writeHistory("Снял", money, newAmount)
+	return f.writeHistory("Снял", money, newAmount)
 }
 
-func GetBalance() (float64, error) {
-	bal, err := ReadBalance()
+func (f *File) GetBalance() (float64, error) {
+	bal, err := f.ReadBalance()
 	if err != nil {
 		return 0, err
 	}
 	return bal.Amount, nil
 }
 
-func GetHistory() (string, error) {
-	data, err := os.ReadFile(historyFile)
+func (f *File) GetHistory() (string, error) {
+	data, err := os.ReadFile(f.historyFile)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return "история пуста\n", nil
