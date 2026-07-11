@@ -15,6 +15,13 @@ type Balance struct {
 	Amount float64 `json:"amount"`
 }
 
+type History struct {
+	Time      string  `json:"time"`
+	Operation string  `json:"operation"`
+	Amount    float64 `json:"amount"`
+	Balance   float64 `json:"balance"`
+}
+
 func NewFile(balFile, HistFile string) *File {
 	return &File{
 		balanceFile: balFile,
@@ -53,15 +60,30 @@ func (f *File) WriteBalance(balance float64) error {
 }
 
 func (f *File) writeHistory(operation string, money, balance float64) error {
-	file, err := os.OpenFile(f.historyFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		return fmt.Errorf("не удалось открыть историю: %w", err)
-	}
-	defer file.Close()
+	var historyList []History
 
-	t := time.Now().Format("2006-01-02 15:04:05")
-	_, err = fmt.Fprintf(file, "[%s] %s %.2f баланс сейчас %.2f\n", t, operation, money, balance)
+	data, err := os.ReadFile(f.historyFile)
+	if err == nil && len(data) > 0 {
+		if jsonErr := json.Unmarshal(data, &historyList); jsonErr != nil {
+			historyList = []History{}
+		}
+	}
+
+	history := History{
+		Time:      time.Now().Format("2006-01-02 15:04:05"),
+		Operation: operation,
+		Amount:    money,
+		Balance:   balance,
+	}
+
+	historyList = append(historyList, history)
+
+	updatedData, err := json.MarshalIndent(historyList, "", "    ")
 	if err != nil {
+		return fmt.Errorf("не удалось сформировать json: %w", err)
+	}
+
+	if err := os.WriteFile(f.historyFile, updatedData, 0644); err != nil {
 		return fmt.Errorf("не удалось записать историю: %w", err)
 	}
 	return nil
@@ -120,5 +142,21 @@ func (f *File) GetHistory() (string, error) {
 		}
 		return "", fmt.Errorf("не удалось прочитать историю: %w", err)
 	}
-	return string(data), nil
+
+	if len(data) == 0 {
+		return "история пуста\n", nil
+	}
+
+	var history []History
+	if err := json.Unmarshal(data, &history); err != nil {
+		return "", fmt.Errorf("файл истории повреждён: %w", err)
+	}
+
+	var result string
+	for _, record := range history {
+		result += fmt.Sprintf("[%s] %s %.2f баланс сейчас %.2f\n",
+			record.Time, record.Operation, record.Amount, record.Balance)
+	}
+
+	return result, nil
 }
