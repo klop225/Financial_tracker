@@ -6,9 +6,14 @@ import (
 )
 
 const (
-	balanceFileTest = "balance.json"
-	historyFileTest = "history"
+	balanceFileTest = "balanceTest.json"
+	historyFileTest = "historyTest"
 )
+
+func init() {
+	balanceFile = balanceFileTest
+	historyFile = historyFileTest
+}
 
 func TestDeposit(t *testing.T) {
 

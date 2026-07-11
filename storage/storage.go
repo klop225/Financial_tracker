@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-const (
+var (
 	balanceFile = "balance.json"
 	historyFile = "history"
 )
