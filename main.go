@@ -2,10 +2,15 @@ package main
 
 import (
 	"Financial_tracker/command"
+	"Financial_tracker/storage"
 	"fmt"
 )
 
 func main() {
+	store := storage.NewFile("balance.json", "history")
+
+	cmdHandler := command.NewCommandHadler(store)
+
 	var cmd string
 	var money float64
 
@@ -18,7 +23,7 @@ func main() {
 		case "add":
 			fmt.Print("какая сумма пополнения ")
 			fmt.Scan(&money)
-			if err := command.Add(money); err != nil {
+			if err := cmdHandler.Add(money); err != nil {
 				fmt.Printf("Ошибка: %v\n", err)
 			} else {
 				fmt.Printf("Средства успешно добавлены\n")
@@ -26,20 +31,20 @@ func main() {
 		case "take":
 			fmt.Print("сколько хотите снять? ")
 			fmt.Scan(&money)
-			if err := command.Take(money); err != nil {
+			if err := cmdHandler.Take(money); err != nil {
 				fmt.Printf("Ошибка: %v\n", err)
 			} else {
 				fmt.Printf("Средства успешно сняты\n")
 			}
 		case "balance":
-			balance, err := command.GetBalance()
+			balance, err := cmdHandler.GetBalance()
 			if err != nil {
 				fmt.Printf("Ошибка: %v\n", err)
 			} else {
 				fmt.Printf("ваш баланс %.2f\n", balance)
 			}
 		case "history":
-			history, err := command.GetHistory()
+			history, err := cmdHandler.GetHistory()
 			if err != nil {
 				fmt.Printf("Ошибка: %v\n", err)
 			} else {
