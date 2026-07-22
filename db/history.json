@@ -4,5 +4,11 @@
         "operation": "Пополнил",
         "amount": 100,
         "balance": 100
+    },
+    {
+        "time": "2026-07-22 05:03:28",
+        "operation": "Пополнил",
+        "amount": 100,
+        "balance": 200
     }
 ]
