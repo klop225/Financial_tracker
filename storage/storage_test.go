@@ -6,11 +6,11 @@ import (
 )
 
 func TestDeposit(t *testing.T) {
-	testStore := NewFile("balanceTest.json", "historyTest")
+	testStore := NewFile("balanceTest.json", "historyTest.json")
 
 	defer func() {
 		os.Remove("balanceTest.json")
-		os.Remove("historyTest")
+		os.Remove("historyTest.json")
 	}()
 
 	err := testStore.Deposit(100.50)
@@ -29,11 +29,11 @@ func TestDeposit(t *testing.T) {
 }
 
 func TestWithdraw(t *testing.T) {
-	testStore := NewFile("balanceTest.json", "historyTest")
+	testStore := NewFile("balanceTest.json", "historyTest.json")
 
 	defer func() {
 		os.Remove("balanceTest.json")
-		os.Remove("historyTest")
+		os.Remove("historyTest.json")
 	}()
 
 	err := testStore.Deposit(200)
@@ -56,11 +56,11 @@ func TestWithdraw(t *testing.T) {
 }
 
 func TestWithdrawInsufficientFunds(t *testing.T) {
-	testStore := NewFile("balanceTest.json", "historyTest")
+	testStore := NewFile("balanceTest.json", "historyTest.json")
 
 	defer func() {
 		os.Remove("balanceTest.json")
-		os.Remove("historyTest")
+		os.Remove("historyTest.json")
 	}()
 
 	err := testStore.Deposit(100)
@@ -80,11 +80,11 @@ func TestWithdrawInsufficientFunds(t *testing.T) {
 }
 
 func TestDepositNegative(t *testing.T) {
-	testStore := NewFile("balanceTest.json", "historyTest")
+	testStore := NewFile("balanceTest.json", "historyTest.json")
 
 	defer func() {
 		os.Remove("balanceTest.json")
-		os.Remove("historyTest")
+		os.Remove("historyTest.json")
 	}()
 
 	err := testStore.Deposit(-50)
@@ -94,11 +94,11 @@ func TestDepositNegative(t *testing.T) {
 }
 
 func TestWithdrawNegative(t *testing.T) {
-	testStore := NewFile("balanceTest.json", "historyTest")
+	testStore := NewFile("balanceTest.json", "historyTest.json")
 
 	defer func() {
 		os.Remove("balanceTest.json")
-		os.Remove("historyTest")
+		os.Remove("historyTest.json")
 	}()
 
 	err := testStore.Deposit(100)
@@ -113,11 +113,11 @@ func TestWithdrawNegative(t *testing.T) {
 }
 
 func TestGetHistory(t *testing.T) {
-	testStore := NewFile("balanceTest.json", "historyTest")
+	testStore := NewFile("balanceTest.json", "historyTest.json")
 
 	defer func() {
 		os.Remove("balanceTest.json")
-		os.Remove("historyTest")
+		os.Remove("historyTest.json")
 	}()
 
 	history, err := testStore.GetHistory()
