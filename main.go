@@ -7,9 +7,9 @@ import (
 )
 
 func main() {
-	store := storage.NewFile("balance.json", "history.json")
+	store := storage.NewFile("db/balance.json", "db/history.json")
 
-	cmdHandler := command.NewCommandHadler(store)
+	cmdHandler := command.NewCommandHandler(store)
 
 	var cmd string
 	var money float64
