@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -8,6 +9,7 @@ import (
 )
 
 type File struct {
+	db          *sql.DB
 	balanceFile string
 	historyFile string
 }
@@ -22,10 +24,35 @@ type History struct {
 	Balance   float64 `json:"balance"`
 }
 
-func NewFile(balFile, HistFile string) *File {
+type Config struct {
+	Host     string
+	Port     string
+	Password string
+	User     string
+	Name     string
+	SSLMode  string
+}
+
+func PostgresDB(cfg Config) (*sql.DB, error) {
+
+	pSQL := fmt.Sprintf("host=%s port=%s password=%s user=%s dbname=%s sslmode=%s", cfg.Host, cfg.Port, cfg.Password, cfg.User, cfg.Name, cfg.SSLMode)
+
+	db, err := sql.Open("postgres", pSQL)
+	if err != nil {
+		return nil, fmt.Errorf("ошибка открытия БД: %w", err)
+	}
+
+	if err := db.Ping(); err != nil {
+		return nil, fmt.Errorf("ошибка проверки соединения с БД: %w", err)
+	}
+	return db, nil
+}
+
+func NewFile(db *sql.DB, balFile, HistFile string) *File {
 	return &File{
 		balanceFile: balFile,
 		historyFile: HistFile,
+		db:          db,
 	}
 }
 
@@ -90,19 +117,23 @@ func (f *File) writeHistory(operation string, money, balance float64) error {
 }
 
 func (f *File) Deposit(money float64) error {
-	if money <= 0 {
-		return fmt.Errorf("некорректная сумма пополнения: %.2f, сумма должна быть больше нуля", money)
+	var count int
+
+	err := f.db.QueryRow("SELECT COUNT(*) FROM balance").Scan(&count)
+	if err != nil {
+		return fmt.Errorf("не удалось проверить баланс: %w", err)
 	}
 
-	bal, err := f.ReadBalance()
+	if count == 0 {
+		_, err = f.db.Exec("INSERT INTO balance (amount) VALUES ($1)", money)
+	} else {
+		_, err = f.db.Exec("UPDATE balance SET amount = amount + $1 WHERE id = 1", money)
+	}
+
 	if err != nil {
-		return err
+		return fmt.Errorf("не удалось пополнить баланс: %w", err)
 	}
-	newAmount := bal.Amount + money
-	if err := f.WriteBalance(newAmount); err != nil {
-		return err
-	}
-	return f.writeHistory("Пополнил", money, newAmount)
+	return nil
 }
 
 func (f *File) Withdraw(money float64) error {
