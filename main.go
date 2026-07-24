@@ -4,10 +4,34 @@ import (
 	"Financial_tracker/command"
 	"Financial_tracker/storage"
 	"fmt"
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 func main() {
-	store := storage.NewFile("db/balance.json", "db/history.json")
+	if err := godotenv.Load(); err != nil {
+		log.Println("файл .env не найден")
+	}
+
+	cfg := storage.Config{
+		Host:     os.Getenv("DB_HOST"),
+		Port:     os.Getenv("DB_PORT"),
+		Password: os.Getenv("DB_PASSWORD"),
+		User:     os.Getenv("DB_USER"),
+		Name:     os.Getenv("DB_NAME"),
+		SSLMode:  os.Getenv("DB_SSLMODE"),
+	}
+
+	db, err := storage.PostgresDB(cfg)
+	if err != nil {
+		log.Fatalf("Ошибка подключения к БД: %v", err)
+	}
+	defer db.Close()
+
+	store := storage.NewFile(db, "db/balance.json", "db/history.json")
 
 	cmdHandler := command.NewCommandHandler(store)
 
